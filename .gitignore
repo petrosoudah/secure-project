@@ -1,0 +1,14 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Local server logs
+logs/
+*.log
+
+# Sensitive config (if any)
+# config/db.php # Uncomment if you want to keep local DB credentials out of GitHub
