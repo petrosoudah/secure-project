@@ -74,9 +74,6 @@ staffvault/
 
 ---
 
-## 👥 Contributors
-- **Petro Soudah** (@petrosoudah)
-- [Your Partner's Name]
 
 ---
 *Created for the Secure Software Development University Project.*
