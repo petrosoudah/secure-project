@@ -17,4 +17,11 @@ try {
     // don't show real error to users
     die("Database connection failed. Please check your configuration.");
 }
+
+// ensure session_token column exists for concurrent login checks
+try {
+    $pdo->exec("ALTER TABLE users ADD COLUMN session_token VARCHAR(255) DEFAULT NULL");
+} catch (PDOException $e) {
+    // ignore error if column already exists
+}
 ?>

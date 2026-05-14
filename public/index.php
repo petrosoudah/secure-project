@@ -9,6 +9,14 @@ if (isset($_SESSION['user_id'])) {
 }
 
 $error = '';
+if (isset($_GET['error']) && $_GET['error'] === 'session_expired') {
+    $error = 'Session expired due to inactivity. Please login again.';
+} elseif (isset($_GET['error']) && $_GET['error'] === 'unauthorized') {
+    $error = 'You must be logged in to view that page.';
+} elseif (isset($_GET['error']) && $_GET['error'] === 'concurrent_login') {
+    $error = 'You have been logged out because another session was started on a different device.';
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
         $error = 'Invalid CSRF token.';
@@ -30,6 +38,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 session_regenerate_id(true);
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $user['username'];
+                
+                // generate and store a new session token for concurrent login check
+                $session_token = bin2hex(random_bytes(32));
+                $_SESSION['session_token'] = $session_token;
+                
+                $update_stmt = $pdo->prepare("UPDATE users SET session_token = ? WHERE id = ?");
+                $update_stmt->execute([$session_token, $user['id']]);
 
                 log_event("Login Success", $user['id'], "User logged in successfully");
                 header("Location: dashboard.php");
